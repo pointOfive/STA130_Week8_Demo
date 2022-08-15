@@ -1,0 +1,123 @@
+---
+title: "STA130 R Simple Linear Regression"
+author: "Scott Schwartz"
+date: "Fall 2022 Week 8"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval=TRUE, include=TRUE, echo=TRUE)
+```
+
+# Part I: Data
+
+```{r}
+library(tidyverse)
+#install.packages("Stat2Data")
+library(Stat2Data) # This package contains the NCbirths data
+# Sometimes, we need to use the data() function to load data from an R package into our R session
+data(NCbirths) # After running this line, you'll see it appear in the Environment pane in the top left :)
+glimpse(NCbirths)
+```
+
+## Q1 - What does `?NCbirths` show? 
+
+###(a) How many observations are there in these data?
+
+###(b) What does each observation represent?
+
+###(c) Who contributed these data?
+
+## Q2 - Add a `BirthWeightLbs` variable to the data using `BirthWeightOz` and the fact that there are 16 oz in 1 lb.
+
+```{r}
+
+```
+
+## Q3 - Create a visualization to explore the association between the baby's weight at birth (on the y-axis) and gestational length (duration of a pregnancy in weeks) (on the x-axis). Describe this distribution.
+
+```{r}
+
+```
+
+## Q4 - Consider the association between the duration of pregnancy and birthweight for babies born at 34 weeks or later. Create a new tibble containing only observations for babies born in this range, and plot the data association between `BirthWeightLbs` and `Weeks` now.
+
+```{r}
+# Remove babies born before 34 seeks who are quite premature
+NCbirths_34plus <- NCbirths %>% 
+
+glimpse(NCbirths_34plus)
+
+# plot the data association on the restricted data set
+```
+
+# Part II: Simple Linear Regression
+
+## Q1 - What's the correlation between `BirthWeightLbs` and `Weeks` for the restricted `NCbirths_34plus` data set? 
+```{r}
+# Does the correlation reflect our intuition about the association between these two variables?
+```
+
+## Q2 Create a visualization to visualize of association between weeks and birthweight for babies born at or after 34 weeks, adding the fitted regression line to the plot.
+```{r}
+
+```
+
+## Q3 - Use the `lm` function to fit a linear regression model to find the least-squares parameter estimates of a simple linear regression predicting the weight of a baby based on the duration of the pregnancy (in weeks). 
+```{r}
+
+```
+
+## Q4 - Interpret the estimated slope $\hat \beta_1$
+
+## Q5 - Interpret the estimated intercept $\hat \beta_0$.
+
+## Q6 - Based on the `NCbirths_34plus` data, is there evidence that the slope of this linear regression model significantly different from 0?
+
+## Q7 - Calculate the proportion of the variability in weight that is explained by the simple linear regression model in two ways. 
+
+```{r}
+# What does this suggest?
+
+```
+
+# Part III: Indicator Variables
+
+## Q1 - Create a visualization to explore the association between mothers' smoking status and birthweight (after 34 weeks), and describe what we observe.
+
+```{r}
+
+## What's weird here?
+## 1. We get a warning saying the x aesthetic is continuous (when it should be categorical instead)
+## 2. Some observations have missing values so are omitted
+
+NCbirths_34plus <- NCbirths_34plus %>% filter(!is.na(Smoke) & !is.na(BirthWeightLbs)) %>%
+  mutate(Smoke = case_when(Smoke == 0 ~ "Non-smoking mother",
+                           Smoke == 1 ~ "Smoking mother"))
+```
+
+## Q3 - Fit a linear regression model to predict the birthweight of a baby based on his/her mother's smoking status.
+
+```{r}
+
+```
+
+## Q3 - What is the baseline group in the model above?
+
+## Q4 - Interpret the estimated intercept $\hat \beta_0$.
+
+```{r}
+# Checking our work
+NCbirths_34plus %>% group_by(Smoke) %>%
+  summarise(mean = mean(BirthWeightLbs))
+# The numbers here match up with the values we get from the fitted regression model :)
+```
+
+## Q5 - Interpret the estimated "slope" $\hat \beta_1$ (which is actually a "contrast" rather than a "slope").
+
+## Q6 - Based on these data, is there a difference between the mean weight of babies born to smoking vs non-smoking mothers?
+
+# Part IV: Conclusion
+
+Moving forward we'll  build richer linear regression models with more than 1 predictor. For example, it's clear based on these examples that there are many factors that affect an infants babies' birthweight, and looking at these potential predictors one at a time is not enough to make good predictions.
